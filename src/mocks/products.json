@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "description": "Brigadeiro",
+    "cost": 0.75,
+    "price": 2.5,
+    "category": {
+      "id": 1,
+      "name": "Doces"
+    }
+  },
+  {
+    "id": 2,
+    "description": "Brigadeiro gourmet",
+    "cost": 0.75,
+    "price": 2.5,
+    "category": {
+      "id": 1,
+      "name": "Doces"
+    }
+  },
+  {
+    "id": 3,
+    "description": "Pastel de carne",
+    "cost": 0.75,
+    "price": 3,
+    "category": {
+      "id": 2,
+      "name": "Salgados"
+    }
+  },
+  {
+    "id": 4,
+    "description": "Enroladinho de salsicha",
+    "cost": 0.75,
+    "price": 3,
+    "category": {
+      "id": 2,
+      "name": "Salgados"
+    }
+  },
+  {
+    "id": 5,
+    "description": "Teste LIMITE",
+    "cost": 0.75,
+    "price": 50,
+    "category": {
+      "id": 3,
+      "name": "Teste"
+    }
+  }
+]

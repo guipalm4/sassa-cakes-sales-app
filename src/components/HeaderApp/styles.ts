@@ -3,7 +3,6 @@ import styled from 'styled-components/native';
 export const Header = styled.View`
   padding: 10px;
   background: #e7e3e6;
-
   flex-direction: row;
   justify-content: space-between;
   align-items: center;

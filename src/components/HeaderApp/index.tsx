@@ -4,8 +4,13 @@ import {Header, HeaderTitle, ModuleName, HomeButton, LogoImage} from './styles';
 
 import {useNavigation} from '@react-navigation/native';
 
-import LogoImg from '../../assets/logo.png';
-const HeaderApp: React.FC = () => {
+interface HeaderProps {
+  title: string;
+  module: string;
+  logo: object;
+}
+
+const HeaderApp: React.FC<HeaderProps> = ({title, module, logo, ...rest}) => {
   const {navigate} = useNavigation();
 
   const navigateToMenu = useCallback(() => {
@@ -15,11 +20,11 @@ const HeaderApp: React.FC = () => {
   return (
     <Header>
       <HeaderTitle>
-        Sassa Cakes {'\n'}
-        <ModuleName>Vendas</ModuleName>
+        {title + '\n'}
+        <ModuleName>{module}</ModuleName>
       </HeaderTitle>
       <HomeButton onPress={navigateToMenu}>
-        <LogoImage source={LogoImg} />
+        <LogoImage source={logo} />
       </HomeButton>
     </Header>
   );
