@@ -19,8 +19,15 @@ const Menu: React.FC = () => {
     <Container>
       <Logo source={logoImg} />
       <Title>O que você deseja fazer? </Title>
-      <Button onPress={() => navigation.navigate('Sale')}>Vender</Button>
-      <Button onPress={() => {}}>Cadastrar Produtos</Button>
+      <Button color="" textColor="" onPress={() => navigation.navigate('Sale')}>
+        Vender
+      </Button>
+      <Button color="" textColor="" onPress={() => {}}>
+        Cadastrar Produtos
+      </Button>
+      <Button color="" textColor="" onPress={() => {}}>
+        Montar Cardápio do dia
+      </Button>
     </Container>
   );
 };

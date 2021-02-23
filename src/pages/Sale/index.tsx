@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import Text from 'react-native';
 import {
   Container,
@@ -26,12 +26,23 @@ import LogoImg from '../../assets/logo.png';
 import ImgExemplo from '../../assets/exemplo.jpg';
 export interface Product {
   id: Number;
-  description: String;
+  name: String;
   price: Number;
+  qtd: number;
 }
 
 const Sale: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
+
+  const handleAddProduct = useCallback(
+    async (id) => {
+      const productsUpdated = products.map((product) =>
+        product.id === id ? {...product, qtd: product.qtd + 1} : product,
+      );
+      setProducts(productsUpdated);
+    },
+    [products],
+  );
 
   useEffect(() => {
     api.get('/product/').then((response) => {
@@ -58,13 +69,18 @@ const Sale: React.FC = () => {
               <ProductImage source={ImgExemplo}></ProductImage>
               <RemoveItemContainer onPress={() => {}}>
                 <ProductInfo>
-                  <ProductName>{product.description}</ProductName>
-                  <ProductPrice>R$ {product.price}</ProductPrice>
+                  <ProductName>{product.name}</ProductName>
+                  <ProductPrice>{product.price}</ProductPrice>
                 </ProductInfo>
               </RemoveItemContainer>
-              <AddItemContainer onPress={() => {}}>
+              <AddItemContainer
+                onPress={() => {
+                  handleAddProduct(product.id);
+                }}>
                 <SaleInfo>
-                  <SaleQuantity>Qtd: 5</SaleQuantity>
+                  <SaleQuantity>
+                    Qtd: {product.qtd ? product.qtd : 0}
+                  </SaleQuantity>
                   <SubTotal>R$5,00</SubTotal>
                 </SaleInfo>
               </AddItemContainer>
