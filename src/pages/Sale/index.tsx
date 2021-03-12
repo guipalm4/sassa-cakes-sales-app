@@ -23,31 +23,54 @@ import Mock from '../../mocks/products.json';
 
 import HeaderApp from '../../components/HeaderApp';
 import LogoImg from '../../assets/logo.png';
+import formatValue from '../../utils/formatValue';
 import ImgExemplo from '../../assets/exemplo.jpg';
+
 export interface Product {
-  id: Number;
-  name: String;
-  price: Number;
+  id: number;
+  name: string;
+  price: number;
   qtd: number;
+  imageUrl: string;
+  formattedPrice: string;
 }
 
 const Sale: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  
+  function handleIncrementProduct(id: number): void {
+    setProducts(
+      products.map(product =>        
+        product.id === id ? { ...product, qtd: product.qtd + 1 } : product,
+      ),
+    );    
+  }
 
-  const handleAddProduct = useCallback(
-    async (id) => {
-      const productsUpdated = products.map((product) =>
-        product.id === id ? {...product, qtd: product.qtd + 1} : product,
-      );
-      setProducts(productsUpdated);
-    },
-    [products],
-  );
+  function handleDecrementProduct(id: number): void {
+    const findProduct = products.find(product => product.id === id);
+
+    if (!findProduct) return;
+    if (findProduct.qtd === 0) return;
+
+    setProducts(
+      products.map(product =>
+        product.id === id ? { ...product, qtd: product.qtd - 1 } : product,
+      ),
+    );
+  }
 
   useEffect(() => {
-    api.get('/product/').then((response) => {
-      setProducts(response.data);
-    });
+    async function loadProducts(): Promise<void> {
+      const response = await api.get('product/');
+      setProducts(
+        response.data.map((product: Omit<Product, 'qtd'>) => ({
+          ...product,
+          formattedPrice: formatValue(product.price),
+          qtd: 0
+        })),
+        );
+      }
+    loadProducts();
   }, []);
 
   return (
@@ -66,20 +89,22 @@ const Sale: React.FC = () => {
           }
           renderItem={({item: product}) => (
             <ProductContainer>
-              <ProductImage source={ImgExemplo}></ProductImage>
-              <RemoveItemContainer onPress={() => {}}>
+              <ProductImage source={{
+                  uri: product.imageUrl,
+                }}></ProductImage>
+              <RemoveItemContainer onPress={() => {handleDecrementProduct(product.id)}}>
                 <ProductInfo>
                   <ProductName>{product.name}</ProductName>
-                  <ProductPrice>{product.price}</ProductPrice>
+                  <ProductPrice>{product.formattedPrice}</ProductPrice>
                 </ProductInfo>
               </RemoveItemContainer>
               <AddItemContainer
                 onPress={() => {
-                  handleAddProduct(product.id);
+                  handleIncrementProduct(product.id)
                 }}>
                 <SaleInfo>
                   <SaleQuantity>
-                    Qtd: {product.qtd ? product.qtd : 0}
+                    Qtd: {product.qtd}
                   </SaleQuantity>
                   <SubTotal>R$5,00</SubTotal>
                 </SaleInfo>
