@@ -1,5 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import Text from 'react-native';
+import React, {useEffect, useState, useMemo} from 'react';
 import {
   Container,
   ProductList,
@@ -8,23 +7,24 @@ import {
   RemoveItemContainer,
   AddItemContainer,
   ProductName,
-  ProductPrice,
-  SellButton,
-  SellButtonText,
+  ProductPrice,  
   ProductImage,
   ProductInfo,
   SaleInfo,
   SaleQuantity,
   SubTotal,
+  SubtotalValue,
+  TotalProductsContainer,
+  TotalProductsText
 } from './styles';
 import api from '../../services/api';
-
-import Mock from '../../mocks/products.json';
-
 import HeaderApp from '../../components/HeaderApp';
 import LogoImg from '../../assets/logo.png';
 import formatValue from '../../utils/formatValue';
-import ImgExemplo from '../../assets/exemplo.jpg';
+
+import FeatherIcon from 'react-native-vector-icons/Feather';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 export interface Product {
   id: number;
@@ -33,15 +33,34 @@ export interface Product {
   qtd: number;
   imageUrl: string;
   formattedPrice: string;
+  subTotal: string;
 }
 
 const Sale: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [quantity, setQuantity] = useState<Number>(0);
+  const [total, setTotal] = useState(0);
+  
+  useEffect(() => {
+    async function loadProducts(): Promise<void> {
+      const response = await api.get('product/');
+      setProducts(
+        response.data.map((product: Omit<Product, 'qtd'>) => ({
+          ...product,
+          formattedPrice: formatValue(product.price),
+          qtd: 0,
+          subTotal: formatValue(0)
+        })),
+        );
+      }
+    loadProducts();
+  }, []);
   
   function handleIncrementProduct(id: number): void {
     setProducts(
       products.map(product =>        
-        product.id === id ? { ...product, qtd: product.qtd + 1 } : product,
+        product.id === id ? { ...product, qtd: product.qtd + 1,
+        subTotal: formatValue((product.price * (product.qtd + 1))) } : product,
       ),
     );    
   }
@@ -54,24 +73,25 @@ const Sale: React.FC = () => {
 
     setProducts(
       products.map(product =>
-        product.id === id ? { ...product, qtd: product.qtd - 1 } : product,
+        product.id === id ? { ...product, qtd: product.qtd - 1,
+        subTotal: formatValue((product.price * (product.qtd - 1))) } : product,
       ),
     );
-  }
+  } 
+  
+  const cartTotal = useMemo(() => {
+    const total = products.reduce((accumulator, product) => {
+      return accumulator + product.qtd * product.price;
+    }, 0);
 
-  useEffect(() => {
-    async function loadProducts(): Promise<void> {
-      const response = await api.get('product/');
-      setProducts(
-        response.data.map((product: Omit<Product, 'qtd'>) => ({
-          ...product,
-          formattedPrice: formatValue(product.price),
-          qtd: 0
-        })),
-        );
-      }
-    loadProducts();
-  }, []);
+    const quantity = products.reduce((accumulator, product) => {
+      return accumulator + product.qtd;
+    }, 0);
+
+    setTotal(total);
+    setQuantity(quantity)
+    return formatValue(total);
+  }, [products, total, quantity]);  
 
   return (
     <>
@@ -106,16 +126,18 @@ const Sale: React.FC = () => {
                   <SaleQuantity>
                     Qtd: {product.qtd}
                   </SaleQuantity>
-                  <SubTotal>R$5,00</SubTotal>
+              <SubTotal>{product.subTotal}</SubTotal>
                 </SaleInfo>
               </AddItemContainer>
             </ProductContainer>
           )}
         />
       </Container>
-      <SellButton onPress={() => {}}>
-        <SellButtonText>Finalizar Venda</SellButtonText>
-      </SellButton>
+      <TotalProductsContainer>
+        <MaterialCommunityIcons name="cart-arrow-right" color="#332927" size={24} />
+        <TotalProductsText>{`${quantity} itens`}</TotalProductsText>
+        <SubtotalValue>{cartTotal}</SubtotalValue>
+      </TotalProductsContainer>
     </>
   );
 };

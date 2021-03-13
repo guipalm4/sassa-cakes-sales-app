@@ -100,3 +100,33 @@ export const SellButtonText = styled.Text`
   color: #312e38;
   font-size: 18px;
 `;
+
+export const TotalProductsContainer = styled.TouchableOpacity`
+  position: absolute;
+  bottom: 0px;
+
+  flex-direction: row;
+  background: #ffbf00;
+
+  padding: 20px 40px;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+export const TotalProductsText = styled.Text`
+  font-size: 16px;
+  color: #312e38;
+  margin-left: 15px;
+
+  flex: 1;
+  font-weight: bold;
+  font-family: 'Poppins-Medium';
+`;
+
+export const SubtotalValue = styled.Text`
+  font-size: 16px;
+  color: #312e38;
+  font-weight: bold;
+  font-family: 'Poppins-Medium';
+`;
+
