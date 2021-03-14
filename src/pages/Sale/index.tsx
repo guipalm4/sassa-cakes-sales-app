@@ -15,16 +15,20 @@ import {
   SubTotal,
   SubtotalValue,
   TotalProductsContainer,
-  TotalProductsText
+  TotalProductsText,
+  PaymentMethodContainer,
+  PaymentMethodItem,
+  PaymentMethodSlider,
+  Title
 } from './styles';
 import api from '../../services/api';
 import HeaderApp from '../../components/HeaderApp';
 import LogoImg from '../../assets/logo.png';
 import formatValue from '../../utils/formatValue';
 
-import FeatherIcon from 'react-native-vector-icons/Feather';
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'//currency-brl
+import Entypo from 'react-native-vector-icons/Entypo'//credit-card
+import Fontisto from 'react-native-vector-icons/Fontisto' //receipt
 
 export interface Product {
   id: number;
@@ -36,10 +40,17 @@ export interface Product {
   subTotal: string;
 }
 
+interface MethodPayment {
+  id: number;
+  description: string;
+}
+
 const Sale: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [quantity, setQuantity] = useState<Number>(0);
   const [total, setTotal] = useState(0);
+  const [paymentMethods, setPaymentMethods] = useState<MethodPayment[]>([]);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<number|undefined>();
   
   useEffect(() => {
     async function loadProducts(): Promise<void> {
@@ -53,7 +64,23 @@ const Sale: React.FC = () => {
         })),
         );
       }
+      console.log(selectedPaymentMethod);
+      
     loadProducts();
+  }, []);
+
+  useEffect(() => {
+    async function loadPaymentMethods(): Promise<void> {
+      
+      const paymentMethods = [        
+        {id :1, description: 'MONEY' },
+        {id :2, description: 'CREDIT_CARD' },
+        {id :3, description: 'ON_HAVING' },      
+      ]      
+      setPaymentMethods(paymentMethods);                     
+    } 
+
+    loadPaymentMethods();
   }, []);
   
   function handleIncrementProduct(id: number): void {
@@ -77,7 +104,15 @@ const Sale: React.FC = () => {
         subTotal: formatValue((product.price * (product.qtd - 1))) } : product,
       ),
     );
-  } 
+  }
+  
+  function handleSelectPaymentMethod(id : number) :void {
+    if (selectedPaymentMethod === id) {
+      setSelectedPaymentMethod(undefined);
+    } else {
+      setSelectedPaymentMethod(id);
+    }
+  }  
   
   const cartTotal = useMemo(() => {
     const total = products.reduce((accumulator, product) => {
@@ -92,6 +127,15 @@ const Sale: React.FC = () => {
     setQuantity(quantity)
     return formatValue(total);
   }, [products, total, quantity]);  
+
+  function renderIcon(paymentMethod: MethodPayment) {    
+    switch(paymentMethod.description){
+        case "MONEY": return <MaterialCommunityIcons name="currency-brl" color="#332927" size={40}/>;
+        case "CREDIT_CARD": return <Entypo name="credit-card" color="#332927" size={40}/>;
+        case "ON_HAVING": return <Fontisto name="prescription" color="#332927" size={40}/>;
+        default: return <MaterialCommunityIcons name="currency-brl" color="#332927" size={40}/>
+  }
+}
 
   return (
     <>
@@ -132,6 +176,26 @@ const Sale: React.FC = () => {
             </ProductContainer>
           )}
         />
+         <PaymentMethodContainer>
+          <Title>Forma de pagamento</Title>
+          <PaymentMethodSlider
+            contentContainerStyle={{
+              paddingHorizontal: 20,
+            }}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+          >
+            {paymentMethods.map(paymentMethod => (
+              <PaymentMethodItem
+                key={paymentMethod.id}
+                isSelected={paymentMethod.id === selectedPaymentMethod}
+                onPress={() => handleSelectPaymentMethod(paymentMethod.id)}
+                activeOpacity={0.6}>                
+                {renderIcon(paymentMethod)}                
+              </PaymentMethodItem>
+            ))}
+          </PaymentMethodSlider>
+        </PaymentMethodContainer>
       </Container>
       <TotalProductsContainer>
         <MaterialCommunityIcons name="cart-arrow-right" color="#332927" size={24} />

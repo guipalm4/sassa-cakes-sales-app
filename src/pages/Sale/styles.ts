@@ -1,7 +1,11 @@
-import styled from 'styled-components/native';
+import styled, { css } from 'styled-components/native';
 import {Product} from './index';
 import {FlatList} from 'react-native';
 import {RectButton} from 'react-native-gesture-handler';
+
+interface PaymentMethodItemProps {
+  isSelected?: boolean;
+}
 
 export const Container = styled.View`
   flex: 1;
@@ -128,5 +132,46 @@ export const SubtotalValue = styled.Text`
   color: #312e38;
   font-weight: bold;
   font-family: 'Poppins-Medium';
+`;
+
+export const PaymentMethodContainer = styled.View`
+  margin-top: 40px;
+  margin-bottom:40px;
+  flex:1;
+`;
+
+export const PaymentMethodSlider = styled.ScrollView`
+  margin-top: 16px;
+`;
+
+export const PaymentMethodItem = styled.TouchableOpacity<PaymentMethodItemProps>`
+  background-color: #f0f0f5;
+  border: 2px;
+  border-color: #f0f0f5;
+  height: 120px;
+  width: 120px;
+  border-radius: 8px;
+  padding-top: 20px;
+  padding-bottom: 16px;
+  margin-right: 8px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  ${props =>
+    props.isSelected &&
+    css`
+      border-color: #ffbf00;
+      background-color: #fef7be;
+    `}
+`;
+
+export const Title = styled.Text`
+  font-family: 'Poppins-Regular';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 30px;
+  color: #3d3d4d;
+  padding: 0 20px;
 `;
 
