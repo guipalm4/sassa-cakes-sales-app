@@ -16,9 +16,11 @@ const Button: React.FC<ButtonProps> = ({
   children,
   ...rest
 }) => (
-  <Container {...rest}>
-    <ButtonText>{children}</ButtonText>
-  </Container>
+  <Container color={color} {...rest}>
+  <ButtonText textColor={textColor}>
+    {children}
+  </ButtonText>
+</Container>
 );
 
 export default Button;

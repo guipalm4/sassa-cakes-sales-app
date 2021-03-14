@@ -26,9 +26,9 @@ import HeaderApp from '../../components/HeaderApp';
 import LogoImg from '../../assets/logo.png';
 import formatValue from '../../utils/formatValue';
 
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'//currency-brl
-import Entypo from 'react-native-vector-icons/Entypo'//credit-card
-import Fontisto from 'react-native-vector-icons/Fontisto' //receipt
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import Entypo from 'react-native-vector-icons/Entypo'
+import Fontisto from 'react-native-vector-icons/Fontisto'
 
 export interface Product {
   id: number;
@@ -76,6 +76,7 @@ const Sale: React.FC = () => {
         {id :1, description: 'MONEY' },
         {id :2, description: 'CREDIT_CARD' },
         {id :3, description: 'ON_HAVING' },      
+        //{id :4, description: 'TESTE' },      
       ]      
       setPaymentMethods(paymentMethods);                     
     } 
@@ -138,7 +139,7 @@ const Sale: React.FC = () => {
 }
 
   return (
-    <>
+    
       <Container>
         <HeaderApp
           title="Sassa Cakes"
@@ -174,7 +175,7 @@ const Sale: React.FC = () => {
                 </SaleInfo>
               </AddItemContainer>
             </ProductContainer>
-          )}
+          )}          
         />
          <PaymentMethodContainer>
           <Title>Forma de pagamento</Title>
@@ -196,13 +197,17 @@ const Sale: React.FC = () => {
             ))}
           </PaymentMethodSlider>
         </PaymentMethodContainer>
-      </Container>
-      <TotalProductsContainer>
+
+
+
+        <TotalProductsContainer>
         <MaterialCommunityIcons name="cart-arrow-right" color="#332927" size={24} />
         <TotalProductsText>{`${quantity} itens`}</TotalProductsText>
         <SubtotalValue>{cartTotal}</SubtotalValue>
       </TotalProductsContainer>
-    </>
+      </Container>
+      
+
   );
 };
 

@@ -85,26 +85,6 @@ export const ProductPrice = styled.Text`
   color: #332927;
 `;
 
-export const SellButton = styled.TouchableOpacity`
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  background: #ffbf00;
-  border-top-width: 1px;
-  border-color: #e7e3e6;
-  padding: 14px 0;
-  justify-content: center;
-  align-items: center;
-  flex-direction: row;
-`;
-
-export const SellButtonText = styled.Text`
-  font-family: 'Poppins-Medium';
-  color: #312e38;
-  font-size: 18px;
-`;
-
 export const TotalProductsContainer = styled.TouchableOpacity`
   position: absolute;
   bottom: 0px;
@@ -136,8 +116,9 @@ export const SubtotalValue = styled.Text`
 
 export const PaymentMethodContainer = styled.View`
   margin-top: 40px;
-  margin-bottom:40px;
-  flex:1;
+  margin-bottom:80px;
+  
+  
 `;
 
 export const PaymentMethodSlider = styled.ScrollView`

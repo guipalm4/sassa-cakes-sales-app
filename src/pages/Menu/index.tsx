@@ -19,13 +19,13 @@ const Menu: React.FC = () => {
     <Container>
       <Logo source={logoImg} />
       <Title>O que você deseja fazer? </Title>
-      <Button color="" textColor="" onPress={() => navigation.navigate('Sale')}>
+      <Button color="#ffbf00" textColor="#312e38" onPress={() => navigation.navigate('Sale')}>
         Vender
       </Button>
-      <Button color="" textColor="" onPress={() => {}}>
+      <Button color="#ffbf00" textColor="#312e38" onPress={() => {}}>
         Cadastrar Produtos
       </Button>
-      <Button color="" textColor="" onPress={() => {}}>
+      <Button color="#ffbf00" textColor="#312e38" onPress={() => {}}>
         Montar Cardápio do dia
       </Button>
     </Container>
