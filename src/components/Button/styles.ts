@@ -1,4 +1,4 @@
-import styled from 'styled-components/native';
+import styled, { css } from 'styled-components/native';
 import {RectButton} from 'react-native-gesture-handler';
 import ButtonProps from './index';
 
@@ -9,12 +9,11 @@ interface ButtonProps {
 interface TextProps {
   textColor: string;
 }
-//#ffbf00 button
-//#312e38 text
+
 export const Container = styled(RectButton)<ButtonProps>`
   width: 100%;
   height: 60px;
-  background: ${props => props.color};
+  background: ${props => props.enabled ? props.color : "#0000003d"}; 
   border-radius: 10px;
   justify-content: center;
   align-items: center;

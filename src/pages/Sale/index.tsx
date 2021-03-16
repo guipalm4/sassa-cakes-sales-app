@@ -1,4 +1,16 @@
 import React, {useEffect, useState, useMemo} from 'react';
+
+import api from '../../services/api';
+import HeaderApp from '../../components/HeaderApp';
+import LogoImg from '../../assets/logo.png';
+import Modal from '../../components/Modal'
+
+import formatValue from '../../utils/formatValue';
+
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import Entypo from 'react-native-vector-icons/Entypo'
+import Fontisto from 'react-native-vector-icons/Fontisto'
+
 import {
   Container,
   ProductList,
@@ -19,16 +31,9 @@ import {
   PaymentMethodContainer,
   PaymentMethodItem,
   PaymentMethodSlider,
+  PaymentMethodItemTitle,
   Title
 } from './styles';
-import api from '../../services/api';
-import HeaderApp from '../../components/HeaderApp';
-import LogoImg from '../../assets/logo.png';
-import formatValue from '../../utils/formatValue';
-
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import Entypo from 'react-native-vector-icons/Entypo'
-import Fontisto from 'react-native-vector-icons/Fontisto'
 
 export interface Product {
   id: number;
@@ -43,6 +48,7 @@ export interface Product {
 interface MethodPayment {
   id: number;
   description: string;
+  text: string;
 }
 
 const Sale: React.FC = () => {
@@ -51,6 +57,8 @@ const Sale: React.FC = () => {
   const [total, setTotal] = useState(0);
   const [paymentMethods, setPaymentMethods] = useState<MethodPayment[]>([]);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<number|undefined>();
+
+  const [modal, setModal] = useState(false)
   
   useEffect(() => {
     async function loadProducts(): Promise<void> {
@@ -73,9 +81,9 @@ const Sale: React.FC = () => {
     async function loadPaymentMethods(): Promise<void> {
       
       const paymentMethods = [        
-        {id :1, description: 'MONEY' },
-        {id :2, description: 'CREDIT_CARD' },
-        {id :3, description: 'ON_HAVING' },      
+        {id :1, description: 'MONEY', text: "Dinheiro" },
+        {id :2, description: 'CREDIT_CARD', text: "Cartão de crédito" },
+        {id :3, description: 'ON_HAVING', text: "A prazo" },      
         //{id :4, description: 'TESTE' },      
       ]      
       setPaymentMethods(paymentMethods);                     
@@ -192,19 +200,24 @@ const Sale: React.FC = () => {
                 isSelected={paymentMethod.id === selectedPaymentMethod}
                 onPress={() => handleSelectPaymentMethod(paymentMethod.id)}
                 activeOpacity={0.6}>                
-                {renderIcon(paymentMethod)}                
+                {renderIcon(paymentMethod)}
+                <PaymentMethodItemTitle>{paymentMethod.text}</PaymentMethodItemTitle>          
               </PaymentMethodItem>
             ))}
           </PaymentMethodSlider>
         </PaymentMethodContainer>
 
-
-
-        <TotalProductsContainer>
+        <TotalProductsContainer onPress={() => setModal(true)}>
         <MaterialCommunityIcons name="cart-arrow-right" color="#332927" size={24} />
         <TotalProductsText>{`${quantity} itens`}</TotalProductsText>
         <SubtotalValue>{cartTotal}</SubtotalValue>
       </TotalProductsContainer>
+
+      <Modal show={modal}
+        close={() => setModal(false)}
+        buttonText="Confirmar" text={`Confirma a venda de ${cartTotal}?`}
+        enableButton={selectedPaymentMethod==3 ? false:true}>            
+      </Modal>
       </Container>
       
 

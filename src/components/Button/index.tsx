@@ -17,8 +17,8 @@ const Button: React.FC<ButtonProps> = ({
   ...rest
 }) => (
   <Container color={color} {...rest}>
-  <ButtonText textColor={textColor}>
-    {children}
+  <ButtonText textColor={textColor}>  
+  {children}
   </ButtonText>
 </Container>
 );

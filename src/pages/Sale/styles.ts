@@ -136,7 +136,7 @@ export const PaymentMethodItem = styled.TouchableOpacity<PaymentMethodItemProps>
   padding-bottom: 16px;
   margin-right: 8px;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   text-align: center;
   ${props =>
     props.isSelected &&
@@ -155,4 +155,12 @@ export const Title = styled.Text`
   color: #3d3d4d;
   padding: 0 20px;
 `;
-
+export const PaymentMethodItemTitle = styled.Text`
+  font-style: normal;
+  font-family: 'Poppins-Regular';
+  font-weight: bold;
+  font-size: 15px;
+  line-height: 15px;
+  text-align: center;
+  color: #3d3d4d;
+`;
