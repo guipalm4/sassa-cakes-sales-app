@@ -1,19 +1,20 @@
 import React, {useState, useEffect, Children} from 'react';
 import Button from '../Button';
-import { View, Text, StyleSheet, TouchableOpacity, Animated, Dimensions } from 'react-native'
+import { View, Text, StyleSheet, ScrollView, Animated, Dimensions } from 'react-native'
+
 
 import SearchInput from '../../components/SearchInput';
 
- import { Indicator, ModalText  } from './styles';
+ import { Indicator, ItemText, ModalText  } from './styles';
 
  const { height } = Dimensions.get('window')
 
  interface ModalProps {
-    text: string;
-    buttonText: string;
+    text: string;   
     show: boolean;
     close: any;
-    enableButton: boolean
+    enableButton: boolean;
+    info?: Product[];
   }
 
   interface Customer {
@@ -21,7 +22,13 @@ import SearchInput from '../../components/SearchInput';
     name?: string;
   }
 
-const Modal: React.FC<ModalProps> = ({text, buttonText, show,  close, children, enableButton, ...rest}) => {
+  interface Product {
+    id: number;
+  name: string; 
+  qtd: number;
+  }
+
+const Modal: React.FC<ModalProps> = ({text, show,  close, children, enableButton, info,...rest}) => {
 
     const [state, setState] = useState({
         opacity: new Animated.Value(0),
@@ -78,10 +85,18 @@ const Modal: React.FC<ModalProps> = ({text, buttonText, show,  close, children, 
         <ModalText>
            {text}
         </ModalText>
-        {children}
+        <ScrollView>
+        {info && info.map( (itemSale: Product)=> (
+        <ItemText key={itemSale.id}>
+          {`${itemSale.qtd} x ${itemSale.name}`}
+        </ItemText>  
+        ))}       
+        </ScrollView>
         <Button style={styles.btn} color="#ffbf00" textColor="#312e38" onPress={close} enabled={enableButton}>
-            {buttonText}
+            Sim
         </Button>
+       
+       
         </Animated.View>
     </Animated.View>
   )
@@ -108,13 +123,11 @@ const styles = StyleSheet.create({
     paddingLeft: 25,
     paddingRight: 25
   },
-  btn: { 
-    
+  btn: {     
     width: '100%',
     height: 50,
     borderRadius: 10,
-    bottom: 0,
-    position: 'absolute',    
+    bottom: 0,    
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf:"center",

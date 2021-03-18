@@ -9,8 +9,9 @@ export const Indicator = styled.View `
     margin-top: 5px;
 `
 export const ModalText = styled.Text `
-  font-family: 'Poppins-Regular';
+  font-family: 'Poppins-Medium';
   margin-top: 20px;
+  margin-bottom: 20px;
   align-self: center;
   font-style: normal;  
   font-size: 20px;
@@ -18,4 +19,14 @@ export const ModalText = styled.Text `
   color: #3d3d4d;
   padding: 0 20px;
 `
+
+export const ItemText = styled.Text ` 
+  font-family: 'Poppins-Regular';
+  margin-top: 10px;  
+  margin-left: 20px;  
+  text-align: justify;
+  font-style: normal;  
+  font-size: 16px;
+`
+
 

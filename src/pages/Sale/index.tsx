@@ -51,14 +51,27 @@ interface MethodPayment {
   text: string;
 }
 
+interface Customer {
+  id: number;
+  name: string;
+  phone: string;
+}
+
+interface ItemSale {
+  qtd: number;
+  product: Product
+}
+
 const Sale: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
   const [quantity, setQuantity] = useState<Number>(0);
   const [total, setTotal] = useState(0);
   const [paymentMethods, setPaymentMethods] = useState<MethodPayment[]>([]);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<number|undefined>();
-
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer|undefined>();
   const [modal, setModal] = useState(false)
+  const [itemsSale, setItemsSale] = useState<Product[]>([]);
   
   useEffect(() => {
     async function loadProducts(): Promise<void> {
@@ -75,6 +88,14 @@ const Sale: React.FC = () => {
       console.log(selectedPaymentMethod);
       
     loadProducts();
+  }, []);
+
+  useEffect(() => {
+    async function loadCustomers(): Promise<void> {
+      const response = await api.get('customer/');
+      setCustomers(response.data);
+    }
+    loadCustomers();
   }, []);
 
   useEffect(() => {
@@ -144,8 +165,15 @@ const Sale: React.FC = () => {
         case "ON_HAVING": return <Fontisto name="prescription" color="#332927" size={40}/>;
         default: return <MaterialCommunityIcons name="currency-brl" color="#332927" size={40}/>
   }
-}
 
+}
+  function generateSale() : void {  
+    setItemsSale(
+      products.filter(product=> product.qtd >0)
+    );
+    setModal(true);       
+
+}
   return (
     
       <Container>
@@ -207,7 +235,8 @@ const Sale: React.FC = () => {
           </PaymentMethodSlider>
         </PaymentMethodContainer>
 
-        <TotalProductsContainer onPress={() => setModal(true)}>
+        <TotalProductsContainer disabled= {selectedPaymentMethod? false : true}
+          onPress={() => generateSale()}>
         <MaterialCommunityIcons name="cart-arrow-right" color="#332927" size={24} />
         <TotalProductsText>{`${quantity} itens`}</TotalProductsText>
         <SubtotalValue>{cartTotal}</SubtotalValue>
@@ -215,11 +244,11 @@ const Sale: React.FC = () => {
 
       <Modal show={modal}
         close={() => setModal(false)}
-        buttonText="Confirmar" text={`Confirma a venda de ${cartTotal}?`}
-        enableButton={selectedPaymentMethod==3 ? false:true}>            
+        text={`Confirma a venda de ${cartTotal}?`}
+        enableButton={selectedPaymentMethod==3 ? false:true}
+        info={itemsSale}>            
       </Modal>
-      </Container>
-      
+      </Container>     
 
   );
 };
