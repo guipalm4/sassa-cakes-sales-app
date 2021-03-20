@@ -1,9 +1,9 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import {NavigationContainer} from '@react-navigation/native';
 
-import { CustomerProvider } from './customer';
+import {CustomerProvider} from './customer';
 
-const AppProvider: React.FC = ({ children }) => {
+const AppProvider: React.FC = ({children}) => {
   return (
     <CustomerProvider>
       <NavigationContainer>{children}</NavigationContainer>

@@ -15,10 +15,10 @@ const Menu: React.FC = () => {
       <Button color="#ffbf00" textColor="#312e38" onPress={() => navigation.navigate('Sale')}enabled={true}>
         Vender
       </Button>
-      <Button color="#ffbf00" textColor="#312e38" onPress={() => {}}enabled={true}>
+      <Button color="#ffbf00" textColor="#312e38" onPress={() => {}}enabled={false}>
         Cadastrar Produtos
       </Button>
-      <Button color="#ffbf00" textColor="#312e38" onPress={() => {}}enabled={true}>
+      <Button color="#ffbf00" textColor="#312e38" onPress={() => {}}enabled={false}>
         Montar Cardápio do dia
       </Button>
     </Container>

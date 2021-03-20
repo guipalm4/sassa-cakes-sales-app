@@ -1,17 +1,18 @@
 import React, {useEffect, useState, useMemo} from 'react';
+import { useNavigation } from '@react-navigation/native';
 
 import api from '../../services/api';
 import HeaderApp from '../../components/HeaderApp';
 import LogoImg from '../../assets/logo.png';
-import Modal from '../../components/Modal'
+import Modal from '../../components/Modal';
 
 import formatValue from '../../utils/formatValue';
 
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import Entypo from 'react-native-vector-icons/Entypo'
-import Fontisto from 'react-native-vector-icons/Fontisto'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Entypo from 'react-native-vector-icons/Entypo';
+import Fontisto from 'react-native-vector-icons/Fontisto';
 
-import { useCustomer } from '../../hooks/customer';
+import {useCustomer} from '../../hooks/customer';
 
 import {
   Container,
@@ -21,7 +22,7 @@ import {
   RemoveItemContainer,
   AddItemContainer,
   ProductName,
-  ProductPrice,  
+  ProductPrice,
   ProductImage,
   ProductInfo,
   SaleInfo,
@@ -34,7 +35,7 @@ import {
   PaymentMethodItem,
   PaymentMethodSlider,
   PaymentMethodItemTitle,
-  Title
+  Title,
 } from './styles';
 
 export interface Product {
@@ -61,7 +62,7 @@ interface Customer {
 
 interface ItemSale {
   qtd: number;
-  product: Product
+  product: Product;
 }
 
 const Sale: React.FC = () => {
@@ -70,11 +71,16 @@ const Sale: React.FC = () => {
   const [quantity, setQuantity] = useState<Number>(0);
   const [total, setTotal] = useState(0);
   const [paymentMethods, setPaymentMethods] = useState<MethodPayment[]>([]);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<number|undefined>();
-  const [selectedCustomer, setSelectedCustomer] = useState<Customer|undefined>();
-  const [modal, setModal] = useState(false)
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<
+    number | undefined
+  >();
+  const [modal, setModal] = useState(false);
   const [itemsSale, setItemsSale] = useState<Product[]>([]);
-  
+
+  const navigation = useNavigation();
+
+  const { getSelectedCustomer } = useCustomer();
+
   useEffect(() => {
     async function loadProducts(): Promise<void> {
       const response = await api.get('product/');
@@ -83,12 +89,12 @@ const Sale: React.FC = () => {
           ...product,
           formattedPrice: formatValue(product.price),
           qtd: 0,
-          subTotal: formatValue(0)
+          subTotal: formatValue(0),
         })),
-        );
-      }
-      console.log(selectedPaymentMethod);
-      
+      );
+    }
+    console.log(selectedPaymentMethod);
+
     loadProducts();
   }, []);
 
@@ -102,50 +108,59 @@ const Sale: React.FC = () => {
 
   useEffect(() => {
     async function loadPaymentMethods(): Promise<void> {
-      
-      const paymentMethods = [        
-        {id :1, description: 'MONEY', text: "Dinheiro" },
-        {id :2, description: 'CREDIT_CARD', text: "Cartão de crédito" },
-        {id :3, description: 'ON_HAVING', text: "A prazo" },      
-        //{id :4, description: 'TESTE' },      
-      ]      
-      setPaymentMethods(paymentMethods);                     
-    } 
+      const paymentMethods = [
+        {id: 1, description: 'MONEY', text: 'Dinheiro'},
+        {id: 2, description: 'CREDIT_CARD', text: 'Cartão de crédito'},
+        {id: 3, description: 'ON_HAVING', text: 'A prazo'},
+        //{id :4, description: 'TESTE' },
+      ];
+      setPaymentMethods(paymentMethods);
+    }
 
     loadPaymentMethods();
   }, []);
-  
+
   function handleIncrementProduct(id: number): void {
     setProducts(
-      products.map(product =>        
-        product.id === id ? { ...product, qtd: product.qtd + 1,
-        subTotal: formatValue((product.price * (product.qtd + 1))) } : product,
+      products.map((product) =>
+        product.id === id
+          ? {
+              ...product,
+              qtd: product.qtd + 1,
+              subTotal: formatValue(product.price * (product.qtd + 1)),
+            }
+          : product,
       ),
-    );    
+    );
   }
 
   function handleDecrementProduct(id: number): void {
-    const findProduct = products.find(product => product.id === id);
+    const findProduct = products.find((product) => product.id === id);
 
     if (!findProduct) return;
     if (findProduct.qtd === 0) return;
 
     setProducts(
-      products.map(product =>
-        product.id === id ? { ...product, qtd: product.qtd - 1,
-        subTotal: formatValue((product.price * (product.qtd - 1))) } : product,
+      products.map((product) =>
+        product.id === id
+          ? {
+              ...product,
+              qtd: product.qtd - 1,
+              subTotal: formatValue(product.price * (product.qtd - 1)),
+            }
+          : product,
       ),
     );
   }
-  
-  function handleSelectPaymentMethod(id : number) :void {
+
+  function handleSelectPaymentMethod(id: number): void {
     if (selectedPaymentMethod === id) {
       setSelectedPaymentMethod(undefined);
     } else {
       setSelectedPaymentMethod(id);
     }
-  }  
-  
+  }
+
   const cartTotal = useMemo(() => {
     const total = products.reduce((accumulator, product) => {
       return accumulator + product.qtd * product.price;
@@ -156,102 +171,117 @@ const Sale: React.FC = () => {
     }, 0);
 
     setTotal(total);
-    setQuantity(quantity)
+    setQuantity(quantity);
     return formatValue(total);
-  }, [products, total, quantity]);  
+  }, [products, total, quantity]);
 
-  function renderIcon(paymentMethod: MethodPayment) {    
-    switch(paymentMethod.description){
-        case "MONEY": return <MaterialCommunityIcons name="currency-brl" color="#332927" size={40}/>;
-        case "CREDIT_CARD": return <Entypo name="credit-card" color="#332927" size={40}/>;
-        case "ON_HAVING": return <Fontisto name="prescription" color="#332927" size={40}/>;
-        default: return <MaterialCommunityIcons name="currency-brl" color="#332927" size={40}/>
+  function renderIcon(paymentMethod: MethodPayment) {
+    switch (paymentMethod.description) {
+      case 'MONEY':
+        return (
+          <MaterialCommunityIcons
+            name="currency-brl"
+            color="#332927"
+            size={40}
+          />
+        );
+      case 'CREDIT_CARD':
+        return <Entypo name="credit-card" color="#332927" size={40} />;
+      case 'ON_HAVING':
+        return <Fontisto name="prescription" color="#332927" size={40} />;
+      default:
+        return (
+          <MaterialCommunityIcons
+            name="currency-brl"
+            color="#332927"
+            size={40}
+          />
+        );
+    }
   }
-
-}
-  function generateSale() : void {  
-    setItemsSale(
-      products.filter(product=> product.qtd >0)
-    );
-    setModal(true);       
-
-}
+  function generateSale(): void {
+    setItemsSale(products.filter((product) => product.qtd > 0));
+    setModal(true);
+  }
   return (
-    
-      <Container>
-        <HeaderApp
-          title="Sassa Cakes"
-          module="Vendas"
-          logo={LogoImg}></HeaderApp>
+    <Container>
+      <HeaderApp title="Sassa Cakes" module="Vendas" logo={LogoImg}></HeaderApp>
 
-        <ProductList
-          data={products}
-          keyExtractor={(product) => product.id.toString()}
-          ListHeaderComponent={
-            <ProductListTitle>Cardápio do dia</ProductListTitle>
-          }
-          renderItem={({item: product}) => (
-            <ProductContainer>
-              <ProductImage source={{
-                  uri: product.imageUrl,
-                }}></ProductImage>
-              <RemoveItemContainer onPress={() => {handleDecrementProduct(product.id)}}>
-                <ProductInfo>
-                  <ProductName>{product.name}</ProductName>
-                  <ProductPrice>{product.formattedPrice}</ProductPrice>
-                </ProductInfo>
-              </RemoveItemContainer>
-              <AddItemContainer
-                onPress={() => {
-                  handleIncrementProduct(product.id)
-                }}>
-                <SaleInfo>
-                  <SaleQuantity>
-                    Qtd: {product.qtd}
-                  </SaleQuantity>
-              <SubTotal>{product.subTotal}</SubTotal>
-                </SaleInfo>
-              </AddItemContainer>
-            </ProductContainer>
-          )}          
+      <ProductList
+        data={products}
+        keyExtractor={(product) => product.id.toString()}
+        ListHeaderComponent={
+          <ProductListTitle>Cardápio do dia</ProductListTitle>
+        }
+        renderItem={({item: product}) => (
+          <ProductContainer>
+            <ProductImage
+              source={{
+                uri: product.imageUrl,
+              }}></ProductImage>
+            <RemoveItemContainer
+              onPress={() => {
+                handleDecrementProduct(product.id);
+              }}>
+              <ProductInfo>
+                <ProductName>{product.name}</ProductName>
+                <ProductPrice>{product.formattedPrice}</ProductPrice>
+              </ProductInfo>
+            </RemoveItemContainer>
+            <AddItemContainer
+              onPress={() => {
+                handleIncrementProduct(product.id);
+              }}>
+              <SaleInfo>
+                <SaleQuantity>Qtd: {product.qtd}</SaleQuantity>
+                <SubTotal>{product.subTotal}</SubTotal>
+              </SaleInfo>
+            </AddItemContainer>
+          </ProductContainer>
+        )}
+      />
+      <PaymentMethodContainer>
+        <Title>Forma de pagamento</Title>
+        <PaymentMethodSlider
+          contentContainerStyle={{
+            paddingHorizontal: 20,
+          }}
+          horizontal
+          showsHorizontalScrollIndicator={false}>
+          {paymentMethods.map((paymentMethod) => (
+            <PaymentMethodItem
+              key={paymentMethod.id}
+              isSelected={paymentMethod.id === selectedPaymentMethod}
+              onPress={() => handleSelectPaymentMethod(paymentMethod.id)}
+              activeOpacity={0.6}>
+              {renderIcon(paymentMethod)}
+              <PaymentMethodItemTitle>
+                {paymentMethod.text}
+              </PaymentMethodItemTitle>
+            </PaymentMethodItem>
+          ))}
+        </PaymentMethodSlider>
+      </PaymentMethodContainer>
+
+      <TotalProductsContainer
+        disabled={selectedPaymentMethod ? false : true}
+        onPress={() => generateSale()}>
+        <MaterialCommunityIcons
+          name="cart-arrow-right"
+          color="#332927"
+          size={24}
         />
-         <PaymentMethodContainer>
-          <Title>Forma de pagamento</Title>
-          <PaymentMethodSlider
-            contentContainerStyle={{
-              paddingHorizontal: 20,
-            }}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-          >
-            {paymentMethods.map(paymentMethod => (
-              <PaymentMethodItem
-                key={paymentMethod.id}
-                isSelected={paymentMethod.id === selectedPaymentMethod}
-                onPress={() => handleSelectPaymentMethod(paymentMethod.id)}
-                activeOpacity={0.6}>                
-                {renderIcon(paymentMethod)}
-                <PaymentMethodItemTitle>{paymentMethod.text}</PaymentMethodItemTitle>          
-              </PaymentMethodItem>
-            ))}
-          </PaymentMethodSlider>
-        </PaymentMethodContainer>
-
-        <TotalProductsContainer disabled= {selectedPaymentMethod? false : true}
-          onPress={() => generateSale()}>
-        <MaterialCommunityIcons name="cart-arrow-right" color="#332927" size={24} />
         <TotalProductsText>{`${quantity} itens`}</TotalProductsText>
         <SubtotalValue>{cartTotal}</SubtotalValue>
       </TotalProductsContainer>
 
-      <Modal show={modal}
+      <Modal
+        show={modal}
         close={() => setModal(false)}
         text={`Confirma a venda de ${cartTotal}?`}
-        enableButton={selectedPaymentMethod==3 ? false:true}
-        info={itemsSale}>            
-      </Modal>
-      </Container>     
-
+        enableButton={!(selectedPaymentMethod===3)}
+        info={itemsSale}></Modal>
+    </Container>
   );
 };
 
