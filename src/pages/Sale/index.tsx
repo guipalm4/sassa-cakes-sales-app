@@ -334,7 +334,7 @@ const Sale: React.FC = () => {
         >
          <View> 
          <SearchBar
-          onChangeText={updateQuery}
+          onChangeText={(text) => updateQuery(text)}
           value={query}   
           placeholder="Type Here..."/> 
          <FlatList data={customers} keyExtractor = {(i)=>i.id.toString()}
