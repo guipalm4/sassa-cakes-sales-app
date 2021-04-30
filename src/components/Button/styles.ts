@@ -13,7 +13,7 @@ interface TextProps {
 export const Container = styled(RectButton)<ButtonProps>`
   width: 100%;
   height: 60px;
-  background: ${props => props.enabled ? props.color : "#0000003d"}; 
+  background: ${props => props.enabled ? props.color : "#0000000f"}; 
   border-radius: 10px;
   justify-content: center;
   align-items: center;

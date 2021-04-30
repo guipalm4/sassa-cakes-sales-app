@@ -1,16 +1,20 @@
 import React, {useEffect, useState, useMemo} from 'react';
 import { useNavigation } from '@react-navigation/native';
+import {FlatList, Text, View} from 'react-native';
 
 import api from '../../services/api';
 import HeaderApp from '../../components/HeaderApp';
 import LogoImg from '../../assets/logo.png';
 import Modal from '../../components/Modal';
+import  {SearchBar, SearchBarProps}  from 'react-native-elements';
 
 import formatValue from '../../utils/formatValue';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Fontisto from 'react-native-vector-icons/Fontisto';
+
+
 
 import {useCustomer} from '../../hooks/customer';
 
@@ -36,6 +40,7 @@ import {
   PaymentMethodSlider,
   PaymentMethodItemTitle,
   Title,
+  AutoCompleteList,
 } from './styles';
 
 export interface Product {
@@ -66,21 +71,27 @@ interface ItemSale {
 }
 
 const Sale: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);  
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | undefined>();  
   const [quantity, setQuantity] = useState<Number>(0);
   const [total, setTotal] = useState(0);
   const [paymentMethods, setPaymentMethods] = useState<MethodPayment[]>([]);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<
     number | undefined
   >();
-  const [modal, setModal] = useState(false);
+  const [confirmationModal, setConfirmationModal] = useState(false);
+  const [customerModal, setCustomerModal] = useState(false);
   const [itemsSale, setItemsSale] = useState<Product[]>([]);
+
+  //Customer Auto-Complete
+  const [query, setQuery] = useState('');
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [data, setData] = useState<Customer[]>([]);
 
   const navigation = useNavigation();
 
   const { getSelectedCustomer } = useCustomer();
-
+  
   useEffect(() => {
     async function loadProducts(): Promise<void> {
       const response = await api.get('product/');
@@ -99,12 +110,24 @@ const Sale: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    async function loadCustomers(): Promise<void> {
-      const response = await api.get('customer/');
-      setCustomers(response.data);
-    }
-    loadCustomers();
+    fetchData();
   }, []);
+
+  const fetchData = async() => {
+    const response = await api.get('customer/');
+    setData(response.data)
+    setCustomers(response.data.slice());
+  };
+
+  // useEffect(() => {
+  //   async function loadCustomers(): Promise<void> {
+  //     const response = await api.get('customer/');
+  //     setCustomers(response.data);
+  //     setData(response.data);          
+      
+  //   }
+  //   loadCustomers();
+  // }, []);
 
   useEffect(() => {
     async function loadPaymentMethods(): Promise<void> {
@@ -158,6 +181,9 @@ const Sale: React.FC = () => {
       setSelectedPaymentMethod(undefined);
     } else {
       setSelectedPaymentMethod(id);
+      if(id==3){
+        setCustomerModal(true);
+      }
     }
   }
 
@@ -201,8 +227,24 @@ const Sale: React.FC = () => {
   }
   function generateSale(): void {
     setItemsSale(products.filter((product) => product.qtd > 0));
-    setModal(true);
+    setConfirmationModal(true);
   }
+
+  const updateQuery = (input: string)=> {
+    setQuery(input);
+    setCustomers(data.slice());
+
+  }
+
+  const filterNames = (customer:Customer) => {      
+    
+    if(customer.name.startsWith(query)){       
+       return customer.name;
+    }else{        
+       customers.splice(customers.indexOf(customer), 1);  
+    }
+ } 
+
   return (
     <Container>
       <HeaderApp title="Sassa Cakes" module="Vendas" logo={LogoImg}></HeaderApp>
@@ -238,8 +280,9 @@ const Sale: React.FC = () => {
               </SaleInfo>
             </AddItemContainer>
           </ProductContainer>
-        )}
-      />
+        )}        
+      />       
+
       <PaymentMethodContainer>
         <Title>Forma de pagamento</Title>
         <PaymentMethodSlider
@@ -276,11 +319,32 @@ const Sale: React.FC = () => {
       </TotalProductsContainer>
 
       <Modal
-        show={modal}
-        close={() => setModal(false)}
+        show={confirmationModal}
+        close={() => setConfirmationModal(false)}
         text={`Confirma a venda de ${cartTotal}?`}
         enableButton={!(selectedPaymentMethod===3)}
-        info={itemsSale}></Modal>
+        info={itemsSale}>
+      </Modal>      
+      
+      <Modal
+        show={customerModal}
+        close={() => setCustomerModal(false)}
+        text={"Selecione o cliente..."}
+        enableButton={getSelectedCustomer() ? true:false}
+        >
+         <View> 
+         <SearchBar
+          onChangeText={updateQuery}
+          value={query}   
+          placeholder="Type Here..."/> 
+         <FlatList data={customers} keyExtractor = {(i)=>i.id.toString()}
+          extraData = {query} 
+          renderItem = {({item}) =>
+         <AutoCompleteList >{`${item.name}`} </AutoCompleteList>} 
+        />       
+        </View> 
+      </Modal>
+
     </Container>
   );
 };

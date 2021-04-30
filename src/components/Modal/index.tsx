@@ -84,7 +84,7 @@ const Modal: React.FC<ModalProps> = ({text, show,  close, children, enableButton
         <Indicator/>       
         <ModalText>
            {text}
-        </ModalText>
+        </ModalText>        
         <ScrollView>
         {info && info.map( (itemSale: Product)=> (
         <ItemText key={itemSale.id}>

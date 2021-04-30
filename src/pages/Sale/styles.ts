@@ -164,3 +164,12 @@ export const PaymentMethodItemTitle = styled.Text`
   text-align: center;
   color: #3d3d4d;
 `;
+
+export const AutoCompleteList = styled.Text`
+  padding-left:15;
+  margin-top:15;
+  padding-bottom:15;
+  font-size:15;
+  font-family: 'Poppins-Regular';
+  font-weight:lighter;
+`
