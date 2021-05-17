@@ -1,20 +1,20 @@
-import React, {useEffect, useState, useMemo} from 'react';
-import { useNavigation } from '@react-navigation/native';
-import {FlatList, Text, View} from 'react-native';
+/* eslint-disable react-native/no-inline-styles */
+import React, {useEffect, useState, useMemo, useRef} from 'react';
+import {useNavigation} from '@react-navigation/native';
+import {TouchableOpacity} from 'react-native';
 
 import api from '../../services/api';
 import HeaderApp from '../../components/HeaderApp';
 import LogoImg from '../../assets/logo.png';
 import Modal from '../../components/Modal';
-import  {SearchBar, SearchBarProps}  from 'react-native-elements';
+import SearchInput from '../../components/SearchInput';
+import Button from '../../components/Button';
 
 import formatValue from '../../utils/formatValue';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Fontisto from 'react-native-vector-icons/Fontisto';
-
-
 
 import {useCustomer} from '../../hooks/customer';
 
@@ -40,8 +40,20 @@ import {
   PaymentMethodSlider,
   PaymentMethodItemTitle,
   Title,
-  AutoCompleteList,
+  FilterContainer,
+  InputContainer,
+  Icon,
+  TextInput,
+  FormData,
+  FilterDataContainer,
+  FilterDataItem,
+  Separator,
 } from './styles';
+import {
+  ScrollView,
+  TouchableWithoutFeedback,
+} from 'react-native-gesture-handler';
+import {useCallback} from 'react';
 
 export interface Product {
   id: number;
@@ -70,28 +82,35 @@ interface ItemSale {
   product: Product;
 }
 
-const Sale: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>([]);  
-  const [selectedCustomer, setSelectedCustomer] = useState<Customer | undefined>();  
+const Sale: React.FC = ({}) => {
+  const [products, setProducts] = useState<Product[]>([]);
   const [quantity, setQuantity] = useState<Number>(0);
   const [total, setTotal] = useState(0);
   const [paymentMethods, setPaymentMethods] = useState<MethodPayment[]>([]);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<
     number | undefined
   >();
+  const [selectedCustomer, setSelectedCustomer] = useState<
+    Customer | undefined
+  >();
+
+  const [customerNameValue, setCustomerNameValue] = useState('');
+  const [phoneValue, setPhoneValue] = useState('');
+
+  const [enableSelectCustomerButton, setEnableSelectCustomerButton] = useState(
+    false,
+  );
+
   const [confirmationModal, setConfirmationModal] = useState(false);
   const [customerModal, setCustomerModal] = useState(false);
   const [itemsSale, setItemsSale] = useState<Product[]>([]);
 
-  //Customer Auto-Complete
-  const [query, setQuery] = useState('');
   const [customers, setCustomers] = useState<Customer[]>([]);
-  const [data, setData] = useState<Customer[]>([]);
 
-  const navigation = useNavigation();
+  const [searchValue, setSearchValue] = useState('');
+  const [filteredCustomers, setFilteredCustomers] = useState<Customer[]>([]);
+  const [showFilteredData, setShowFilteredData] = useState(false);
 
-  const { getSelectedCustomer } = useCustomer();
-  
   useEffect(() => {
     async function loadProducts(): Promise<void> {
       const response = await api.get('product/');
@@ -104,30 +123,16 @@ const Sale: React.FC = () => {
         })),
       );
     }
-    console.log(selectedPaymentMethod);
-
     loadProducts();
   }, []);
 
   useEffect(() => {
-    fetchData();
+    async function loadCustomers(): Promise<void> {
+      const response = await api.get('customer/');
+      setCustomers(response.data);
+    }
+    loadCustomers();
   }, []);
-
-  const fetchData = async() => {
-    const response = await api.get('customer/');
-    setData(response.data)
-    setCustomers(response.data.slice());
-  };
-
-  // useEffect(() => {
-  //   async function loadCustomers(): Promise<void> {
-  //     const response = await api.get('customer/');
-  //     setCustomers(response.data);
-  //     setData(response.data);          
-      
-  //   }
-  //   loadCustomers();
-  // }, []);
 
   useEffect(() => {
     async function loadPaymentMethods(): Promise<void> {
@@ -142,6 +147,12 @@ const Sale: React.FC = () => {
 
     loadPaymentMethods();
   }, []);
+
+  useEffect(() => {
+    if (customerNameValue && phoneValue) {
+      setEnableSelectCustomerButton(true);
+    }
+  }, [customerNameValue, phoneValue]);
 
   function handleIncrementProduct(id: number): void {
     setProducts(
@@ -160,8 +171,12 @@ const Sale: React.FC = () => {
   function handleDecrementProduct(id: number): void {
     const findProduct = products.find((product) => product.id === id);
 
-    if (!findProduct) return;
-    if (findProduct.qtd === 0) return;
+    if (!findProduct) {
+      return;
+    }
+    if (findProduct.qtd === 0) {
+      return;
+    }
 
     setProducts(
       products.map((product) =>
@@ -181,7 +196,7 @@ const Sale: React.FC = () => {
       setSelectedPaymentMethod(undefined);
     } else {
       setSelectedPaymentMethod(id);
-      if(id==3){
+      if (id == 3) {
         setCustomerModal(true);
       }
     }
@@ -225,29 +240,37 @@ const Sale: React.FC = () => {
         );
     }
   }
+
+  const findCustomer = (query: string) => {
+    setSearchValue(query);
+    if (query) {
+      const regex = new RegExp(`${query.trim()}`, 'i');
+      setFilteredCustomers(
+        customers.filter((customer) => customer.name.search(regex) >= 0),
+      );
+      setShowFilteredData(true);
+    } else {
+      setFilteredCustomers([]);
+    }
+  };
+
   function generateSale(): void {
     setItemsSale(products.filter((product) => product.qtd > 0));
     setConfirmationModal(true);
   }
 
-  const updateQuery = (input: string)=> {
-    setQuery(input);
-    setCustomers(data.slice());
-
+  function handleSelectCustomer(customer: Customer): void {
+    console.log('CUSSTOMER:' + JSON.stringify(customer));
+    console.log('ANTES:' + JSON.stringify(selectedCustomer));
+    setSelectedCustomer(customer);
+    console.log(JSON.stringify(selectedCustomer));
+    //setFilteredCustomers([]);
+    setShowFilteredData(false);
   }
-
-  const filterNames = (customer:Customer) => {      
-    
-    if(customer.name.startsWith(query)){       
-       return customer.name;
-    }else{        
-       customers.splice(customers.indexOf(customer), 1);  
-    }
- } 
 
   return (
     <Container>
-      <HeaderApp title="Sassa Cakes" module="Vendas" logo={LogoImg}></HeaderApp>
+      <HeaderApp title="Sassa Cakes" module="Vendas" logo={LogoImg} />
 
       <ProductList
         data={products}
@@ -260,7 +283,8 @@ const Sale: React.FC = () => {
             <ProductImage
               source={{
                 uri: product.imageUrl,
-              }}></ProductImage>
+              }}
+            />
             <RemoveItemContainer
               onPress={() => {
                 handleDecrementProduct(product.id);
@@ -280,8 +304,8 @@ const Sale: React.FC = () => {
               </SaleInfo>
             </AddItemContainer>
           </ProductContainer>
-        )}        
-      />       
+        )}
+      />
 
       <PaymentMethodContainer>
         <Title>Forma de pagamento</Title>
@@ -322,29 +346,48 @@ const Sale: React.FC = () => {
         show={confirmationModal}
         close={() => setConfirmationModal(false)}
         text={`Confirma a venda de ${cartTotal}?`}
-        enableButton={!(selectedPaymentMethod===3)}
-        info={itemsSale}>
-      </Modal>      
-      
+        info={itemsSale}
+        enableButton={selectedPaymentMethod != 3}
+        actionButton={() => setConfirmationModal(false)}></Modal>
+
       <Modal
         show={customerModal}
         close={() => setCustomerModal(false)}
-        text={"Selecione o cliente..."}
-        enableButton={getSelectedCustomer() ? true:false}
-        >
-         <View> 
-         <SearchBar
-          onChangeText={(text) => updateQuery(text)}
-          value={query}   
-          placeholder="Type Here..."/> 
-         <FlatList data={customers} keyExtractor = {(i)=>i.id.toString()}
-          extraData = {query} 
-          renderItem = {({item}) =>
-         <AutoCompleteList >{`${item.name}`} </AutoCompleteList>} 
-        />       
-        </View> 
-      </Modal>
+        text={'Selecione o cliente...'}
+        enableButton={true}
+        actionButton={() => setCustomerModal(false)}>
+        <FilterContainer>
+          <SearchInput
+            value={searchValue}
+            onChangeText={(text) => findCustomer(text)}
+            placeholder="Procurar"
+          />
+        </FilterContainer>
+        <FormData>
+          <InputContainer>
+            <Icon name="user" size={20} color={'#B7B7CC'} />
 
+            <TextInput
+              key="name"
+              placeholder="Nome do Cliente"
+              placeholderTextColor="#B7B7CC"
+              value={filteredCustomers[0]?.name || customerNameValue}
+              onChangeText={setCustomerNameValue}
+            />
+          </InputContainer>
+
+          <InputContainer>
+            <Icon name="phone" size={20} color={'#B7B7CC'} />
+            <TextInput
+              key="phone"
+              placeholder="Telefone"
+              placeholderTextColor="#B7B7CC"
+              value={filteredCustomers[0]?.phone || phoneValue}
+              onChangeText={setPhoneValue}
+            />
+          </InputContainer>
+        </FormData>
+      </Modal>
     </Container>
   );
 };

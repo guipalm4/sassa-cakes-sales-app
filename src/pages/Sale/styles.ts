@@ -1,10 +1,16 @@
 import styled, { css } from 'styled-components/native';
 import {Product} from './index';
-import {FlatList} from 'react-native';
+import {FlatList, View, TouchableOpacity} from 'react-native';
 import {RectButton} from 'react-native-gesture-handler';
+import FeatherIcon from 'react-native-vector-icons/Feather';
+
 
 interface PaymentMethodItemProps {
   isSelected?: boolean;
+}
+
+interface ContainerDataFilterProps {
+  showFilter: boolean;
 }
 
 export const Container = styled.View`
@@ -170,6 +176,73 @@ export const AutoCompleteList = styled.Text`
   margin-top:15;
   padding-bottom:15;
   font-size:15;
-  font-family: 'Poppins-Regular';
-  font-weight:lighter;
+  font-family: 'Poppins-Regular';  
 `
+
+export const FilterContainer = styled.View`
+  padding: 0 24px;
+  margin-top: 10px;
+  flex:1;  
+`;
+
+export const FormData = styled.View`
+  padding: 24px 24px;
+  margin-top: 40px;  
+  flex:1;   
+  flex-direction:column;
+  align-items:center;
+  align-content:center; 
+  height: 100%;  
+`
+export const InputContainer = styled.View`
+  width: 100%;
+  height: 50px;
+  padding: 0 16px;
+  margin-bottom:10px;  
+  background: #f0f0f5;
+  border-radius: 10px;
+  border-width: 2px;
+  border-color: #f0f0f5;
+  flex-direction: row;
+  align-items: center;
+ 
+`;
+
+export const TextInput = styled.TextInput`
+  flex: 1;
+  color: #6c6c80;   
+  font-size: 14px;
+  font-family: 'Poppins-Regular';   
+`;
+
+export const Icon = styled(FeatherIcon)`
+  margin-right: 14px;
+`;
+
+export const FilterDataContainer = styled.View<ContainerDataFilterProps> `
+  background-Color: #ffffff;
+  border-width: 2px;
+  border-radius:8px;
+  border-color:#fff
+  ${props =>
+    props.showFilter &&
+    css`
+      border-color:#e7e3e6;
+    `}
+    
+  `;
+
+export const FilterDataItem = styled.Text`
+  font-size: 14px;
+  font-family: 'Poppins-Regular';   
+  color: #6c6c80;  
+`
+export const Separator = styled.View`
+  width: 80%;
+  height: 1px;
+  background-color: #ccc;  
+  align-self: flex-start;
+  margin-top: 4px;
+`;
+
+

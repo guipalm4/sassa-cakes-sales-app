@@ -6608,10 +6608,10 @@ react-is@^17.0.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
-react-native-autocomplete-input@^4.2.0:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/react-native-autocomplete-input/-/react-native-autocomplete-input-4.2.0.tgz#fcfc3d2f19134d4c3394a4e6a5aae13d8c4c9129"
-  integrity sha512-bLZ9FO3NwcqYY3r6hefEEC4VW45L97kXuCyAqKXW1SJkkG/pGcen6zLq3SMFgoQuG3ryrO/ohz7gme7hFwzjoQ==
+react-native-autocomplete-input@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-autocomplete-input/-/react-native-autocomplete-input-5.0.0.tgz#2bcba7be7846fe84e1e753362e3fe40c86fd7c46"
+  integrity sha512-JsVm1rLNdyf2mLN0cw8XKTP6xwsCw+laPOxb7j81XOZhsS7nQaWytwp6+YEvSi3bnMRuUpvOUbCiS55av9/0/w==
 
 react-native-autocomplete-select@^1.0.0:
   version "1.0.0"
@@ -6631,10 +6631,24 @@ react-native-codegen@^0.0.6:
     jscodeshift "^0.11.0"
     nullthrows "^1.1.1"
 
-react-native-elements@*, react-native-elements@^3.3.2:
+react-native-elements@*:
   version "3.3.2"
   resolved "https://registry.yarnpkg.com/react-native-elements/-/react-native-elements-3.3.2.tgz#42cc05c90a5c85c8aee95ce363bce0c5a39fe633"
   integrity sha512-bDWQt0WEuJEOrwzSYx0mVBV3aoRtJAsK0Kc2sioMsshSEhPOZK17Ccx+EvLBSpZ9uWxPyx42Z7hUH/8dQNu67g==
+  dependencies:
+    "@types/react-native-vector-icons" "^6.4.6"
+    color "^3.1.2"
+    deepmerge "^4.2.2"
+    hoist-non-react-statics "^3.3.2"
+    lodash.isequal "^4.5.0"
+    opencollective-postinstall "^2.0.3"
+    react-native-ratings "^7.3.0"
+    react-native-size-matters "^0.3.1"
+
+react-native-elements@^3.4.1:
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/react-native-elements/-/react-native-elements-3.4.1.tgz#74ea15a9369b05abf4f7421f0ce236ca01fedfe1"
+  integrity sha512-SPotW75psW1qyZgtiWuiKSTASdd4yNYvf6/vgO6nyl2kEgZG5nP5wtFxL/GsUVxwHh7yc8xnJ3J9pkApa7p9lQ==
   dependencies:
     "@types/react-native-vector-icons" "^6.4.6"
     color "^3.1.2"

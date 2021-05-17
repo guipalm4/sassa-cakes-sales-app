@@ -1,5 +1,4 @@
 import React from 'react';
-import {StyleSheet} from 'react-native';
 import {RectButtonProperties} from 'react-native-gesture-handler';
 
 import {Container, ButtonText} from './styles';
@@ -17,10 +16,8 @@ const Button: React.FC<ButtonProps> = ({
   ...rest
 }) => (
   <Container color={color} {...rest}>
-  <ButtonText textColor={textColor}>  
-  {children}
-  </ButtonText>
-</Container>
+    <ButtonText textColor={textColor}>{children}</ButtonText>
+  </Container>
 );
 
 export default Button;

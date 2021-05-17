@@ -5,7 +5,7 @@ import { TextInputProps } from 'react-native';
 import { Container, TextInput, Icon } from './styles';
 
 interface InputProps extends TextInputProps {
-  name?: string;  
+  name?: string;
 }
 
 const SearchInput: React.FC<InputProps> = ({ value = '', ...rest }) => {
@@ -35,6 +35,7 @@ const SearchInput: React.FC<InputProps> = ({ value = '', ...rest }) => {
         onFocus={handleInputFocus}
         onBlur={handleInputBlur}
         value={value}
+        testID="search-input"
         {...rest}
       />
     </Container>

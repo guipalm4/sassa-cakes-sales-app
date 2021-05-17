@@ -20,6 +20,8 @@ interface CustomerContext {
   customers: Customer[];
   addSelectedCustomer(customer: Customer): void;
   getSelectedCustomer(): Customer | undefined;
+  removeSelectedCustomer() :void;
+
 }
 
 const CustomerContext = createContext<CustomerContext | null>(null);
@@ -70,9 +72,13 @@ const CustomerProvider: React.FC = ({children}) => {
     return selectedCustomer;
   }, []);
 
+  const removeSelectedCustomer = useCallback(() => {
+    setSelectedCustomer(undefined)
+  },[])
+
   const value = React.useMemo(
     () => ({addSelectedCustomer, customers, getSelectedCustomer}),
-    [customers, addSelectedCustomer, getSelectedCustomer],
+    [customers, addSelectedCustomer, getSelectedCustomer, removeSelectedCustomer],
   );
 
   return (
@@ -86,7 +92,7 @@ function useCustomer(): CustomerContext {
   const context = useContext(CustomerContext);
 
   if (!context) {
-    throw new Error(`useCustomer must be used within a CustomerProvider`);
+    throw new Error('useCustomer must be used within a CustomerProvider');
   }
 
   return context;
